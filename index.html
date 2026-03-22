@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="5 façons d'améliorer sa créativité – IND8108 Yassine Seddaoui">
+  <title>5 façons d'améliorer sa créativité</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:       #060815;
+      --bg2:      #0C1128;
+      --surface:  rgba(255,255,255,0.045);
+      --border:   rgba(255,255,255,0.08);
+      --text:     #EDF0FF;
+      --dim:      #7A8BB0;
+      --accent:   #836FFF;
+      --glow:     rgba(131,111,255,0.22);
+      --font-display: 'Syne', sans-serif;
+      --font-body:    'Outfit', -apple-system, sans-serif;
+      --ease:     cubic-bezier(0.4,0,0.2,1);
+      --ease-out: cubic-bezier(0,0,0.2,1);
+      --bubble-r: clamp(54px, 8vw, 78px);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--font-body);
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100dvh;
+      overflow-x: hidden;
+    }
+
+    /* ── Atmosphere ── */
+    .bg-aura {
+      position: fixed; inset: 0; pointer-events: none; z-index: 0;
+      background:
+        radial-gradient(ellipse 70% 55% at 50% -5%,  rgba(90,55,220,0.18) 0%, transparent 70%),
+        radial-gradient(ellipse 50% 45% at 90% 100%, rgba(50,90,210,0.12) 0%, transparent 70%),
+        radial-gradient(ellipse 45% 55% at 5%  60%,  rgba(140,50,190,0.09) 0%, transparent 65%);
+    }
+    .bg-noise {
+      position: fixed; inset: 0; pointer-events: none; z-index: 0; opacity: 0.022;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E");
+      background-size: 250px;
+    }
+    #pcv { position: fixed; inset: 0; z-index: 1; pointer-events: none; opacity: 0.55; }
+
+    /* ── Shell ── */
+    .shell {
+      position: relative; z-index: 2;
+      min-height: 100dvh;
+      display: flex; flex-direction: column;
+    }
+
+    /* ═══════════════════════════════════════════
+       HEADER
+    ═══════════════════════════════════════════ */
+    header {
+      padding: clamp(1.25rem,3vw,2rem) clamp(1rem,4vw,2.5rem) 0.5rem;
+      text-align: center;
+      position: relative;
+    }
+
+    .mode-tag {
+      position: absolute; top: 1.25rem; right: 1.25rem;
+      display: flex; align-items: center; gap: 0.4rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 2rem;
+      color: var(--dim);
+      padding: 0.42rem 0.88rem;
+      font-size: 0.7rem;
+      letter-spacing: 0.08em;
+      backdrop-filter: blur(12px);
+      pointer-events: none;
+      z-index: 20;
+    }
+    .mode-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--accent);
+      animation: blink 3s ease-in-out infinite;
+    }
+
+    h1 {
+      font-family: var(--font-display);
+      font-size: clamp(1.55rem, 4.2vw, 3.4rem);
+      font-weight: 800;
+      letter-spacing: -0.025em;
+      line-height: 1.05;
+      background: linear-gradient(140deg, var(--text) 30%, var(--accent) 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 0.5rem;
+      opacity: 0; animation: fadeUp 0.8s var(--ease) 0.2s both;
+    }
+
+    .subtitle {
+      font-size: clamp(0.68rem, 1.4vw, 0.9rem);
+      color: var(--dim);
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      font-weight: 400;
+      opacity: 0; animation: fadeUp 0.8s var(--ease) 0.38s both;
+    }
+
+    /* ═══════════════════════════════════════════
+       MINDMAP (Desktop)
+    ═══════════════════════════════════════════ */
+    .mindmap-wrap {
+      flex: 1;
+      display: flex; align-items: center; justify-content: center;
+      padding: 1.5rem clamp(0.5rem,3vw,2rem) 0.75rem;
+    }
+
+    .mindmap-stage {
+      position: relative;
+      width: min(880px, 100%);
+      aspect-ratio: 16/10;
+    }
+
+    #svg-branches {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
+      overflow: visible; pointer-events: none;
+    }
+
+    /* ── Center node ── */
+    .center-node {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 5;
+      opacity: 0;
+      animation: centerIn 1.1s var(--ease-out) 0.65s both;
+    }
+    .center-node::before {
+      content: ''; position: absolute; inset: -32px; border-radius: 50%;
+      background: radial-gradient(circle, var(--glow) 0%, transparent 70%);
+      animation: orb 3.5s ease-in-out infinite;
+    }
+    .center-node::after {
+      content: ''; position: absolute; inset: -16px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(131,111,255,0.1) 0%, transparent 70%);
+      animation: orb 3.5s ease-in-out 1.75s infinite;
+    }
+
+    .center-floater { animation: float 4.5s ease-in-out 2s infinite; }
+
+    .center-svg {
+      width: clamp(90px,12vw,148px);
+      height: clamp(90px,12vw,148px);
+      filter: drop-shadow(0 0 18px var(--accent)) drop-shadow(0 0 40px rgba(131,111,255,0.35));
+      animation: starGlow 3.5s ease-in-out infinite;
+    }
+
+    /* ═══════════════════════════════════════════
+       BUBBLES
+    ═══════════════════════════════════════════ */
+    .bubble {
+      position: absolute;
+      width: calc(var(--bubble-r) * 2);
+      height: calc(var(--bubble-r) * 2);
+      border-radius: 50%;
+      transform: translate(-50%, -50%) scale(0);
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      cursor: pointer; z-index: 4;
+      text-align: center; padding: 0.8rem;
+      border: 1.5px solid rgba(255,255,255,0.12);
+      backdrop-filter: blur(6px);
+      transition: transform 0.35s var(--ease), box-shadow 0.35s;
+      user-select: none;
+    }
+    .bubble.show { transform: translate(-50%, -50%) scale(1); }
+    .bubble:hover, .bubble:focus-visible {
+      transform: translate(-50%, -50%) scale(1.13) !important;
+      z-index: 7;
+    }
+    .bubble:focus-visible { outline: 3px solid rgba(255,255,255,0.55); outline-offset: 4px; }
+
+    .bubble-num {
+      position: absolute; top: -5px; right: -5px;
+      width: 22px; height: 22px; border-radius: 50%;
+      background: var(--bg); border: 2px solid;
+      font-family: var(--font-display);
+      font-size: 0.58rem; font-weight: 800;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .bubble-icon {
+      width: clamp(26px,3.8vw,36px);
+      height: clamp(26px,3.8vw,36px);
+      margin-bottom: 4px;
+    }
+    .bubble-icon svg { width: 100%; height: 100%; }
+    .bubble-label {
+      font-family: var(--font-display);
+      font-size: clamp(0.44rem,0.86vw,0.58rem);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      line-height: 1.2;
+      color: #fff;
+      text-shadow: 0 1px 4px rgba(0,0,0,0.6);
+    }
+
+    /* ═══════════════════════════════════════════
+       MOBILE
+    ═══════════════════════════════════════════ */
+    .mobile-section { display: none; }
+
+    .mobile-center-wrap {
+      display: flex; justify-content: center;
+      padding: 1rem 0 0.5rem;
+    }
+
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0.85rem;
+      padding: 0.5rem 1rem 1rem;
+      max-width: 520px;
+      margin: 0 auto; width: 100%;
+    }
+
+    .m-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 1rem; padding: 1.1rem;
+      cursor: pointer;
+      transition: transform 0.3s var(--ease), box-shadow 0.3s;
+      display: flex; flex-direction: column; gap: 0.5rem;
+    }
+    .m-card:hover { transform: translateY(-4px); }
+    .m-card:focus-visible { outline: 2px solid var(--accent); }
+    .m-card-icon { width: 30px; height: 30px; }
+    .m-card-icon svg { width: 100%; height: 100%; }
+    .m-card-title { font-family: var(--font-display); font-size: 0.86rem; font-weight: 700; }
+    .m-card-desc  { font-size: 0.71rem; color: var(--dim); line-height: 1.45; }
+
+    /* ═══════════════════════════════════════════
+       MODAL
+    ═══════════════════════════════════════════ */
+    .modal-overlay {
+      position: fixed; inset: 0; z-index: 200;
+      background: rgba(4,6,20,0.82);
+      backdrop-filter: blur(10px);
+      display: flex; align-items: center; justify-content: center;
+      padding: 1rem;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.3s;
+    }
+    .modal-overlay.open { opacity: 1; pointer-events: all; }
+
+    .modal-box {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 1.6rem;
+      padding: clamp(1.5rem,4vw,2.5rem);
+      max-width: 520px; width: 100%;
+      position: relative;
+      transform: scale(0.88) translateY(24px); opacity: 0;
+      transition: transform 0.42s var(--ease-out), opacity 0.42s;
+      max-height: 90dvh; overflow-y: auto;
+    }
+    .modal-overlay.open .modal-box { transform: scale(1) translateY(0); opacity: 1; }
+
+    .modal-close {
+      position: absolute; top: 1.1rem; right: 1.1rem;
+      width: 34px; height: 34px; border-radius: 50%;
+      border: 1px solid var(--border); background: var(--surface);
+      color: var(--text); cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.9rem;
+      transition: background 0.2s, transform 0.2s;
+    }
+    .modal-close:hover { background: rgba(255,255,255,0.08); transform: rotate(90deg); }
+    .modal-close:focus-visible { outline: 2px solid var(--accent); }
+
+    .modal-icon { width: 46px; height: 46px; display: block; margin-bottom: 0.85rem; }
+    .modal-icon svg { width: 100%; height: 100%; }
+    .modal-tag {
+      font-size: 0.67rem; font-weight: 700; letter-spacing: 0.18em;
+      text-transform: uppercase; color: var(--dim); margin-bottom: 0.2rem;
+    }
+    .modal-title {
+      font-family: var(--font-display);
+      font-size: clamp(1.4rem,3.5vw,1.9rem);
+      font-weight: 800; margin-bottom: 0.2rem;
+    }
+    .modal-subtitle { font-size: 0.84rem; color: var(--dim); margin-bottom: 1rem; font-style: italic; }
+    .modal-bar { height: 3px; border-radius: 2px; margin-bottom: 1.2rem; }
+    .modal-short { color: var(--dim); font-size: 0.91rem; line-height: 1.65; margin-bottom: 1.2rem; }
+    .modal-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 1rem; padding: 1.1rem 1.2rem;
+    }
+    .modal-card p { font-size: 0.87rem; line-height: 1.75; color: var(--text); }
+    .modal-example {
+      font-size: 0.81rem; color: var(--dim); font-style: italic;
+      padding-left: 0.9rem; border-left: 2.5px solid;
+      margin-top: 0.85rem; line-height: 1.65;
+    }
+
+    footer {
+      position: relative; z-index: 2;
+      padding: clamp(0.85rem,2vw,1.2rem) clamp(1rem,4vw,2.5rem);
+      display: flex; align-items: center; justify-content: center;
+      border-top: 1px solid var(--border);
+    }
+    .footer-info { font-size: 0.78rem; color: var(--dim); letter-spacing: 0.04em; }
+    .footer-info strong { color: var(--text); font-weight: 600; }
+
+    #loading {
+      position: fixed; inset: 0; z-index: 1000;
+      background: var(--bg);
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center; gap: 1.25rem;
+      transition: opacity 0.8s var(--ease), visibility 0.8s;
+    }
+    #loading.out { opacity: 0; visibility: hidden; }
+    .load-icon { width: 66px; height: 66px; animation: starGlow 1.6s ease-in-out infinite; }
+    .load-txt {
+      font-family: var(--font-display); font-size: 0.76rem;
+      color: var(--dim); letter-spacing: 0.22em; text-transform: uppercase;
+    }
+    .load-bar {
+      width: 140px; height: 2px;
+      background: var(--border); border-radius: 1px; overflow: hidden;
+    }
+    .load-fill {
+      height: 100%; width: 0; background: var(--accent); border-radius: 1px;
+      animation: loadBar 1.4s var(--ease-out) forwards;
+    }
+
+    /* ═══════════════════════════════════════════
+       KEYFRAMES
+    ═══════════════════════════════════════════ */
+    @keyframes fadeUp {
+      from { opacity:0; transform:translateY(16px); }
+      to   { opacity:1; transform:translateY(0); }
+    }
+    @keyframes centerIn {
+      from { opacity:0; transform:translate(-50%,-50%) scale(0.4); }
+      to   { opacity:1; transform:translate(-50%,-50%) scale(1); }
+    }
+    @keyframes float {
+      0%,100% { transform:translateY(0); }
+      50%      { transform:translateY(-10px); }
+    }
+    @keyframes orb {
+      0%,100% { transform:scale(1);   opacity:0.6; }
+      50%      { transform:scale(1.2); opacity:1; }
+    }
+    @keyframes starGlow {
+      0%,100% { filter:drop-shadow(0 0 10px var(--accent)) drop-shadow(0 0 28px rgba(131,111,255,0.3)); }
+      50%      { filter:drop-shadow(0 0 22px var(--accent)) drop-shadow(0 0 55px rgba(131,111,255,0.55)); }
+    }
+    @keyframes spin  { from{transform:rotate(0deg);} to{transform:rotate(360deg);} }
+    @keyframes spinr { from{transform:rotate(0deg);} to{transform:rotate(-360deg);} }
+    @keyframes blink {
+      0%,100% { opacity:1; }
+      50%      { opacity:0.3; }
+    }
+    @keyframes loadBar { from{width:0;} to{width:100%;} }
+
+    /* ═══════════════════════════════════════════
+       RESPONSIVE
+    ═══════════════════════════════════════════ */
+    @media (max-width: 680px) {
+      .mindmap-wrap   { display:none; }
+      .mobile-section { display:block; }
+    }
+    @media (min-width: 681px) {
+      .mobile-section { display:none; }
+    }
+
+    ::-webkit-scrollbar { width:5px; }
+    ::-webkit-scrollbar-track { background:transparent; }
+    ::-webkit-scrollbar-thumb { background:var(--border); border-radius:3px; }
+  </style>
+</head>
+<body>
+
+<div class="bg-aura" aria-hidden="true"></div>
+<div class="bg-noise" aria-hidden="true"></div>
+<canvas id="pcv" aria-hidden="true"></canvas>
+
+<!-- LOADING -->
+<div id="loading" role="status" aria-label="Chargement">
+  <svg class="load-icon" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <defs>
+      <linearGradient id="lgL" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="#C4B5FD"/>
+        <stop offset="100%" stop-color="#6D5CFA"/>
+      </linearGradient>
+    </defs>
+    <g style="transform-origin:50px 50px;animation:spin 10s linear infinite">
+      <polygon points="50,10 56,40 88,38 65,58 76,88 50,70 24,88 35,58 12,38 44,40"
+        fill="none" stroke="url(#lgL)" stroke-width="2.2" stroke-linejoin="round"/>
+    </g>
+    <g style="transform-origin:50px 50px;animation:spinr 6s linear infinite">
+      <polygon points="50,24 54,40 70,38 58,48 62,64 50,56 38,64 42,48 30,38 46,40"
+        fill="rgba(131,111,255,0.15)" stroke="url(#lgL)" stroke-width="1.5" stroke-linejoin="round"/>
+    </g>
+    <circle cx="50" cy="50" r="6" fill="url(#lgL)" opacity="0.9"/>
+  </svg>
+  <div class="load-txt">Chargement…</div>
+  <div class="load-bar"><div class="load-fill"></div></div>
+</div>
+
+<!-- SHELL -->
+<div class="shell">
+
+  <!-- HEADER -->
+  <header>
+    <h1>5 façons d'améliorer<br>sa créativité</h1>
+    <p class="subtitle">Méthodes validées par la science et la pratique</p>
+  </header>
+
+  <!-- DESKTOP MINDMAP -->
+  <div class="mindmap-wrap">
+    <div class="mindmap-stage" id="stage">
+      <svg id="svg-branches" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <filter id="branchGlow" x="-30%" y="-30%" width="160%" height="160%">
+            <feGaussianBlur stdDeviation="2.8" result="cb"/>
+            <feMerge><feMergeNode in="cb"/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+        </defs>
+      </svg>
+      <div class="center-node" id="centerNode">
+        <div class="center-floater" id="centerFloater"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MOBILE SECTION -->
+  <div class="mobile-section">
+    <div class="mobile-center-wrap" id="mobileCenterWrap"></div>
+    <div class="card-grid" id="cardGrid"></div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-info">
+      <strong>IND8108</strong> &mdash; Yassine Seddaoui
+    </div>
+  </footer>
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="overlay" role="dialog" aria-modal="true" aria-labelledby="mTitle">
+  <div class="modal-box" id="mBox">
+    <button class="modal-close" id="mClose" onclick="closeModal()" aria-label="Fermer">&#x2715;</button>
+    <div  class="modal-icon"    id="mIcon"></div>
+    <div  class="modal-tag"     id="mTag"></div>
+    <h2   class="modal-title"   id="mTitle"></h2>
+    <p    class="modal-subtitle" id="mSub"></p>
+    <div  class="modal-bar"     id="mBar"></div>
+    <p    class="modal-short"   id="mShort"></p>
+    <div  class="modal-card">
+      <p id="mDetail"></p>
+      <p class="modal-example" id="mExample"></p>
+    </div>
+  </div>
+</div>
+
+<script>
+const ICONS = {
+  mindmap: `<svg viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="18" cy="18" r="3.8" fill="currentColor" opacity="0.9"/>
+    <circle cx="6"  cy="8"  r="2.4" stroke="currentColor" stroke-width="1.6" fill="none"/>
+    <circle cx="30" cy="8"  r="2.4" stroke="currentColor" stroke-width="1.6" fill="none"/>
+    <circle cx="6"  cy="28" r="2.4" stroke="currentColor" stroke-width="1.6" fill="none"/>
+    <circle cx="30" cy="28" r="2.4" stroke="currentColor" stroke-width="1.6" fill="none"/>
+    <line x1="14.7" y1="15.4" x2="8.1"  y2="10.1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+    <line x1="21.3" y1="15.4" x2="27.9" y2="10.1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+    <line x1="14.7" y1="20.6" x2="8.1"  y2="25.9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+    <line x1="21.3" y1="20.6" x2="27.9" y2="25.9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+  </svg>`,
+
+  biomimicry: `<svg viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <!-- Bird body -->
+    <ellipse cx="16" cy="21" rx="7" ry="4.5" stroke="currentColor" stroke-width="1.7" fill="none"/>
+    <!-- Head -->
+    <circle cx="23.5" cy="17.5" r="3.5" stroke="currentColor" stroke-width="1.7" fill="none"/>
+    <!-- Beak -->
+    <path d="M26.5 17 L30 16 L26.5 18.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+    <!-- Eye -->
+    <circle cx="24.5" cy="17" r="0.9" fill="currentColor"/>
+    <!-- Wing -->
+    <path d="M13 19 C10 14 7 13 5 15 C8 16 10 18 12 21" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    <!-- Tail -->
+    <path d="M9 22 C7 21 5 23 6 25" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+    <path d="M9 22 C8 24 6 25 7 27" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+    <!-- Legs -->
+    <line x1="15" y1="25.5" x2="14" y2="30" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+    <line x1="18" y1="25.5" x2="18" y2="30" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+    <path d="M12 30 L14 30 L16 30" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+    <path d="M16 30 L18 30 L20 30" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+  </svg>`,
+
+  random: `<svg viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect x="5" y="5" width="26" height="26" rx="5.5" stroke="currentColor" stroke-width="1.8"/>
+    <circle cx="12.5" cy="12.5" r="2"  fill="currentColor"/>
+    <circle cx="23.5" cy="12.5" r="2"  fill="currentColor"/>
+    <circle cx="12.5" cy="23.5" r="2"  fill="currentColor"/>
+    <circle cx="23.5" cy="23.5" r="2"  fill="currentColor"/>
+    <circle cx="18"   cy="18"   r="2"  fill="currentColor"/>
+  </svg>`,
+
+  constraints: `<svg viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect x="5" y="5" width="26" height="26" rx="3.5" stroke="currentColor" stroke-width="1.8"/>
+    <line x1="5"  y1="14" x2="31" y2="14" stroke="currentColor" stroke-width="1.4"/>
+    <line x1="14" y1="5"  x2="14" y2="31" stroke="currentColor" stroke-width="1.4"/>
+    <polyline points="19,21 22,24 28,18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg>`,
+
+  collab: `<svg viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="12" cy="13" r="4.5" stroke="currentColor" stroke-width="1.8"/>
+    <circle cx="24" cy="13" r="4.5" stroke="currentColor" stroke-width="1.8"/>
+    <path d="M4 31 C4 24.5 7.5 21 12 21 C14 21 15.5 21.5 18 21.5 C20.5 21.5 22 21 24 21 C28.5 21 32 24.5 32 31"
+      stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+  </svg>`,
+};
+
+const DATA = [
+  {
+    id:1, iconKey:"mindmap", color:"#FF6B6B",
+    title:"Mind Mapping",
+    subtitle:"Cartographie mentale",
+    short:"On dessine ses idées sur une feuille et on trace des liens entre elles. Ça aide à voir des connexions qu'on n'aurait pas remarquées autrement.",
+    detail:"C'est une technique assez simple : on part d'une idée centrale et on dessine des branches avec des sous-idées. En faisant ça, on voit des liens qu'on n'aurait pas trouvés en écrivant une liste normale. J'ai testé pour un projet scolaire et ça m'a vraiment aidé à organiser mes pensées sans me perdre dans tous mes brouillons.",
+    example:"Par exemple, pour un exposé sur le changement climatique, j'ai mis le sujet au centre et tracé des branches : causes, effets, solutions… et j'ai trouvé des angles auxquels je n'avais vraiment pas pensé au départ."
+  },
+  {
+    id:2, iconKey:"biomimicry", color:"#4ECDC4",
+    title:"Biomimétisme",
+    subtitle:"S'inspirer du vivant",
+    short:"On regarde ce que la nature a déjà inventé et on s'en inspire pour résoudre nos propres problèmes.",
+    detail:"La nature a des millions d'années d'avance sur nous. Les plantes, les animaux, les insectes ont tous trouvé des solutions efficaces à des problèmes complexes. Au lieu de repartir de zéro, on peut observer ce qui marche déjà dans la nature et l'adapter à ce qu'on veut créer.",
+    example:"Le velcro vient des crochets de la bardane. Le train japonais Shinkansen a été redessiné d'après le bec du martin-pêcheur pour réduire le bruit. C'est fou comme la nature peut nous donner des idées qu'on n'aurait jamais eues seuls."
+  },
+  {
+    id:3, iconKey:"random", color:"#45B7D1",
+    title:"Stimuli aléatoires",
+    subtitle:"Connexions inattendues",
+    short:"Prendre un mot ou une image au hasard et l'associer à son problème. Ça force le cerveau à penser autrement.",
+    detail:"Notre cerveau a tendance à toujours suivre les mêmes chemins. En lui donnant un élément complètement aléatoire, on le force à chercher de nouveaux liens. C'est un peu comme un jeu, mais ça débloque vraiment la pensée quand on tourne en rond depuis un moment.",
+    example:"Tu dois trouver un nom pour un café. Tu ouvres un dictionnaire au hasard et tu tombes sur le mot « marée ». Ça t'inspire « Le Flux » ou « La Vague Café »… des noms qu'on n'aurait jamais trouvés autrement."
+  },
+  {
+    id:4, iconKey:"constraints", color:"#FFEEAD",
+    title:"Contraintes créatives",
+    subtitle:"Limites libératrices",
+    short:"Se mettre des limites volontairement pour être forcé de trouver des idées plus originales.",
+    detail:"Quand on a trop de liberté, on a souvent du mal à avancer. Mais si on se fixe une contrainte — seulement 3 couleurs, seulement 100 mots, seulement 10 euros de budget — le cerveau doit se débrouiller autrement. C'est paradoxal, mais les contraintes libèrent souvent plus qu'elles n'emprisonnent.",
+    example:"Dr. Seuss a écrit « The Cat in the Hat » avec seulement 236 mots différents. Twitter avec 280 caractères a créé un style d'écriture complètement nouveau. Les meilleures idées naissent souvent sous la contrainte."
+  },
+  {
+    id:5, iconKey:"collab", color:"#DDA0DD",
+    title:"Collaboration",
+    subtitle:"Intelligence collective",
+    short:"Travailler à plusieurs pour combiner des idées que personne n'aurait eues seul.",
+    detail:"Deux cerveaux valent mieux qu'un. Quand on travaille en groupe, chaque personne apporte son vécu, ses références, sa façon de voir les choses. Des idées qu'on aurait rejetées seul deviennent de bonnes pistes grâce aux autres. C'est vraiment là que les projets deviennent intéressants.",
+    example:"Pixar fait des réunions où toute l'équipe peut critiquer les films en cours de production. C'est pas toujours confortable, mais c'est exactement grâce à ça que leurs films sont aussi bons et cohérents."
+  }
+];
+
+function makeCenterSVG(cls, extraStyle) {
+  const s = extraStyle ? ` style="${extraStyle}"` : '';
+  return `<svg class="${cls}"${s} viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <defs>
+      <linearGradient id="cG1" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="#C4B5FD"/>
+        <stop offset="100%" stop-color="#6D5CFA"/>
+      </linearGradient>
+      <linearGradient id="cG2" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="#EDE9FE"/>
+        <stop offset="100%" stop-color="#A78BFA"/>
+      </linearGradient>
+      <filter id="gf3" x="-40%" y="-40%" width="180%" height="180%">
+        <feGaussianBlur stdDeviation="4" result="cb"/>
+        <feMerge><feMergeNode in="cb"/><feMergeNode in="SourceGraphic"/></feMerge>
+      </filter>
+      <filter id="textGlow" x="-20%" y="-40%" width="140%" height="180%">
+        <feGaussianBlur stdDeviation="3" result="cb"/>
+        <feMerge><feMergeNode in="cb"/><feMergeNode in="SourceGraphic"/></feMerge>
+      </filter>
+    </defs>
+    <!-- Outer dashed orbit -->
+    <circle cx="80" cy="80" r="72" stroke="url(#cG1)" stroke-width="1.2" fill="none"
+      stroke-dasharray="4 3.5" opacity="0.3"
+      style="transform-origin:80px 80px;animation:spin 22s linear infinite"/>
+    <!-- Mid orbit -->
+    <circle cx="80" cy="80" r="56" stroke="url(#cG2)" stroke-width="0.9" fill="none" opacity="0.2"
+      style="transform-origin:80px 80px;animation:spinr 14s linear infinite"/>
+    <!-- Inner glow ring -->
+    <circle cx="80" cy="80" r="40" stroke="url(#cG1)" stroke-width="1.5" fill="rgba(131,111,255,0.05)"
+      opacity="0.45" filter="url(#gf3)"/>
+    <!-- Cardinal dots -->
+    <circle cx="80" cy="10" r="2.5" fill="url(#cG1)" opacity="0.55"/>
+    <circle cx="80" cy="150" r="2.5" fill="url(#cG1)" opacity="0.55"/>
+    <circle cx="10" cy="80" r="2.5" fill="url(#cG1)" opacity="0.55"/>
+    <circle cx="150" cy="80" r="2.5" fill="url(#cG1)" opacity="0.55"/>
+    <!-- Diagonal dots -->
+    <circle cx="29" cy="29"   r="1.8" fill="url(#cG1)" opacity="0.35"/>
+    <circle cx="131" cy="29"  r="1.8" fill="url(#cG1)" opacity="0.35"/>
+    <circle cx="29" cy="131"  r="1.8" fill="url(#cG1)" opacity="0.35"/>
+    <circle cx="131" cy="131" r="1.8" fill="url(#cG1)" opacity="0.35"/>
+    <!-- Text: Créativité -->
+    <text x="80" y="86"
+      font-family="Syne, sans-serif"
+      font-size="17"
+      font-weight="800"
+      text-anchor="middle"
+      letter-spacing="1.5"
+      fill="url(#cG2)"
+      filter="url(#textGlow)"
+      opacity="0.95">Créativité</text>
+  </svg>`;
+}
+
+function buildMindMap() {
+  const stage = document.getElementById('stage');
+  const svg   = document.getElementById('svg-branches');
+  stage.querySelectorAll('.bubble').forEach(e => e.remove());
+  svg.querySelectorAll('path.branch').forEach(e => e.remove());
+
+  const W = stage.offsetWidth, H = stage.offsetHeight;
+  const cx = W / 2, cy = H / 2;
+  const R  = Math.min(W, H) * 0.38;
+
+  DATA.forEach((m, i) => {
+    const angle = ((i / DATA.length) * 360 - 90) * Math.PI / 180;
+    const bx = cx + R * Math.cos(angle);
+    const by = cy + R * Math.sin(angle);
+
+    // branch
+    const dx = bx - cx, dy = by - cy;
+    const len = Math.hypot(dx, dy);
+    const nx = -dy / len, ny = dx / len;
+    const cpX = (cx + bx) / 2 + nx * 32;
+    const cpY = (cy + by) / 2 + ny * 32;
+
+    const path = document.createElementNS('http://www.w3.org/2000/svg','path');
+    path.setAttribute('d', `M${cx},${cy} Q${cpX},${cpY} ${bx},${by}`);
+    path.setAttribute('class','branch');
+    path.setAttribute('data-bid', m.id);
+    path.style.cssText = `fill:none;stroke:${m.color};stroke-width:2.2;stroke-linecap:round;
+      opacity:0.48;filter:url(#branchGlow);transition:opacity 0.3s,stroke-width 0.3s;`;
+    svg.appendChild(path);
+
+    const pl = path.getTotalLength();
+    path.style.strokeDasharray  = pl;
+    path.style.strokeDashoffset = pl;
+    path.style.transition = `stroke-dashoffset 0.9s cubic-bezier(0.4,0,0.2,1) ${0.85+i*0.13}s,
+                              opacity 0.3s,stroke-width 0.3s`;
+    requestAnimationFrame(() => { path.style.strokeDashoffset = 0; });
+
+    // bubble
+    const bub = document.createElement('div');
+    bub.className = 'bubble';
+    bub.tabIndex = 0;
+    bub.setAttribute('role','button');
+    bub.setAttribute('aria-label', m.title);
+    bub.setAttribute('data-bid', m.id);
+    bub.style.cssText = `left:${bx}px;top:${by}px;
+      background:radial-gradient(circle at 35% 25%,${m.color}24,${m.color}0c);
+      border-color:${m.color}45;
+      box-shadow:0 0 28px ${m.color}26,0 0 60px ${m.color}08;`;
+
+    const numEl = document.createElement('div');
+    numEl.className = 'bubble-num';
+    numEl.style.cssText = `border-color:${m.color};color:${m.color};`;
+    numEl.textContent = m.id;
+
+    const ico = document.createElement('div');
+    ico.className = 'bubble-icon';
+    ico.style.color = m.color;
+    ico.innerHTML = ICONS[m.iconKey] || '';
+
+    const lbl = document.createElement('div');
+    lbl.className = 'bubble-label';
+    lbl.textContent = m.title;
+
+    bub.append(numEl, ico, lbl);
+    bub.addEventListener('click',     () => openModal(m));
+    bub.addEventListener('keydown',   e => { if(e.key==='Enter'||e.key===' '){ e.preventDefault(); openModal(m); }});
+    bub.addEventListener('mouseenter',() => hlBranch(m.id, true));
+    bub.addEventListener('mouseleave',() => hlBranch(m.id, false));
+    stage.appendChild(bub);
+
+    setTimeout(() => {
+      bub.classList.add('show');
+      bub.style.boxShadow = `0 0 34px ${m.color}3e,0 0 70px ${m.color}14`;
+    }, 960 + i * 125);
+  });
+}
+
+function hlBranch(id, on) {
+  const p = document.querySelector(`[data-bid="${id}"].branch`);
+  if (!p) return;
+  p.style.opacity     = on ? '1'   : '0.48';
+  p.style.strokeWidth = on ? '4'   : '2.2';
+}
+
+function buildCards() {
+  const grid = document.getElementById('cardGrid');
+  grid.innerHTML = '';
+  DATA.forEach(m => {
+    const c = document.createElement('div');
+    c.className = 'm-card';
+    c.tabIndex = 0;
+    c.setAttribute('role','button');
+    c.style.cssText = `border-color:${m.color}36;box-shadow:0 4px 22px ${m.color}16;`;
+
+    const ico = document.createElement('div');
+    ico.className = 'm-card-icon';
+    ico.style.color = m.color;
+    ico.innerHTML = ICONS[m.iconKey] || '';
+
+    const ttl = document.createElement('div');
+    ttl.className = 'm-card-title';
+    ttl.style.color = m.color;
+    ttl.textContent = m.title;
+
+    const desc = document.createElement('div');
+    desc.className = 'm-card-desc';
+    desc.textContent = m.short;
+
+    c.append(ico, ttl, desc);
+    c.addEventListener('click',   () => openModal(m));
+    c.addEventListener('keydown', e => { if(e.key==='Enter'||e.key===' '){ e.preventDefault(); openModal(m); }});
+    grid.appendChild(c);
+  });
+}
+
+function openModal(m) {
+  const icon = document.getElementById('mIcon');
+  icon.style.color = m.color;
+  icon.innerHTML = ICONS[m.iconKey] || '';
+  document.getElementById('mTag').textContent    = `Méthode ${m.id} sur ${DATA.length}`;
+  document.getElementById('mTitle').textContent  = m.title;
+  document.getElementById('mTitle').style.color  = m.color;
+  document.getElementById('mSub').textContent    = m.subtitle;
+  document.getElementById('mBar').style.background = `linear-gradient(90deg,${m.color},${m.color}00)`;
+  document.getElementById('mShort').textContent  = m.short;
+  document.getElementById('mDetail').textContent = m.detail;
+  document.getElementById('mExample').textContent = m.example;
+  document.getElementById('mExample').style.borderColor = m.color;
+  document.getElementById('overlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+  setTimeout(() => document.getElementById('mClose').focus(), 80);
+}
+
+function closeModal() {
+  document.getElementById('overlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+document.getElementById('overlay').addEventListener('click', e => {
+  if(e.target === document.getElementById('overlay')) closeModal();
+});
+document.addEventListener('keydown', e => { if(e.key==='Escape') closeModal(); });
+
+function initParticles() {
+  const cv = document.getElementById('pcv');
+  const ctx = cv.getContext('2d');
+  let W, H;
+  const pts = Array.from({length:55}, () => ({
+    x: Math.random()*window.innerWidth,
+    y: Math.random()*window.innerHeight,
+    vx:(Math.random()-.5)*.24, vy:(Math.random()-.5)*.24,
+    r: Math.random()*1.3+.4, o:Math.random()*.38+.07
+  }));
+
+  function resize() { W=cv.width=window.innerWidth; H=cv.height=window.innerHeight; }
+  resize();
+  window.addEventListener('resize', resize);
+
+  const CON=90, CON2=CON*CON;
+  function draw() {
+    ctx.clearRect(0,0,W,H);
+    for(const p of pts) {
+      p.x+=p.vx; p.y+=p.vy;
+      if(p.x<0)p.x=W; if(p.x>W)p.x=0;
+      if(p.y<0)p.y=H; if(p.y>H)p.y=0;
+      ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+      ctx.fillStyle=`rgba(131,111,255,${p.o})`; ctx.fill();
+    }
+    for(let i=0;i<pts.length;i++){
+      for(let j=i+1;j<pts.length;j++){
+        const a=pts[i],b=pts[j];
+        const dx=a.x-b.x, dy=a.y-b.y, d2=dx*dx+dy*dy;
+        if(d2<CON2){
+          ctx.beginPath(); ctx.moveTo(a.x,a.y); ctx.lineTo(b.x,b.y);
+          ctx.strokeStyle=`rgba(131,111,255,${.065*(1-d2/CON2)})`;
+          ctx.lineWidth=.5; ctx.stroke();
+        }
+      }
+    }
+    requestAnimationFrame(draw);
+  }
+  draw();
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('centerFloater').innerHTML = makeCenterSVG('center-svg', null);
+
+  const mCW = document.getElementById('mobileCenterWrap');
+  mCW.innerHTML = makeCenterSVG('center-svg', 'width:80px;height:80px');
+
+  initParticles();
+  buildCards();
+
+  setTimeout(() => {
+    buildMindMap();
+    let rt;
+    window.addEventListener('resize', () => {
+      clearTimeout(rt);
+      rt = setTimeout(buildMindMap, 180);
+    });
+  }, 120);
+
+  setTimeout(() => {
+    document.getElementById('loading').classList.add('out');
+  }, 1550);
+});
+</script>
+</body>
+</html>
